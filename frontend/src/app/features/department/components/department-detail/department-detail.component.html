@@ -1,0 +1,78 @@
+<div class="department-detail">
+  <app-loading *ngIf="loading()" message="Chargement du département..."></app-loading>
+
+  <div *ngIf="!loading() && department()" class="detail-content">
+    <div class="detail-header">
+      <div>
+        <h1>{{ department()!.name }}</h1>
+        <span class="department-code">{{ department()!.code }}</span>
+      </div>
+      <div class="header-actions" *ngIf="canEdit()">
+        <app-button variant="primary" routerLink="/department/{{ department()!.id }}/edit">
+          Modifier
+        </app-button>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <app-card title="Informations générales">
+        <div class="info-list">
+          <div class="info-item" *ngIf="department()!.description">
+            <span class="info-label">Description</span>
+            <span class="info-value">{{ department()!.description }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Localisation</span>
+            <span class="info-value">{{ department()!.location || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Budget</span>
+            <span class="info-value">{{ formatBudget(department()!.budget) }}</span>
+          </div>
+          <div class="info-item" *ngIf="department()!.manager_name">
+            <span class="info-label">Manager</span>
+            <span class="info-value">{{ department()!.manager_name }}</span>
+            <span class="info-email" *ngIf="department()!.manager_email">{{ department()!.manager_email }}</span>
+          </div>
+        </div>
+      </app-card>
+
+      <app-card title="Statistiques">
+        <div class="stats-list">
+          <div class="stat-item">
+            <span class="stat-label">Total employés</span>
+            <span class="stat-value">{{ department()!.total_employees || 0 }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Employés actifs</span>
+            <span class="stat-value">{{ department()!.active_employees || 0 }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Postes disponibles</span>
+            <span class="stat-value">{{ department()!.open_positions_count || 0 }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Total postes</span>
+            <span class="stat-value">{{ department()!.job_positions_count || 0 }}</span>
+          </div>
+        </div>
+      </app-card>
+
+      <app-card title="Dates">
+        <div class="info-list">
+          <div class="info-item">
+            <span class="info-label">Créé le</span>
+            <span class="info-value">{{ formatDate(department()!.created_at) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Modifié le</span>
+            <span class="info-value">{{ formatDate(department()!.updated_at) }}</span>
+          </div>
+        </div>
+      </app-card>
+    </div>
+
+    <!-- TODO: Ajouter les sections employés et postes d'emploi -->
+  </div>
+</div>
+

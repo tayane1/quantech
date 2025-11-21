@@ -1,0 +1,89 @@
+<div class="candidate-list">
+  <div class="page-header">
+    <h1>Candidats</h1>
+    <app-button
+      *ngIf="canCreate()"
+      variant="primary"
+      routerLink="/recruitment/candidates/create"
+    >
+      Ajouter un candidat
+    </app-button>
+  </div>
+
+  <app-card class="filters-card" *ngIf="!loading()">
+    <div class="filter-group">
+      <label>Statut:</label>
+      <select [value]="statusFilter()" (change)="onStatusFilterChange($any($event.target).value)" class="filter-select">
+        <option value="all">Tous</option>
+        <option value="applied">Candidature</option>
+        <option value="screening">Sélection</option>
+        <option value="interview">Entretien</option>
+        <option value="offer">Offre</option>
+        <option value="hired">Embauché</option>
+        <option value="rejected">Rejeté</option>
+      </select>
+    </div>
+  </app-card>
+
+  <app-loading *ngIf="loading()" message="Chargement des candidats..."></app-loading>
+
+  <div *ngIf="!loading() && candidates().length === 0" class="empty-state">
+    <app-card>
+      <p>Aucun candidat trouvé</p>
+      <app-button *ngIf="canCreate()" variant="primary" routerLink="/recruitment/candidates/create">
+        Ajouter le premier candidat
+      </app-button>
+    </app-card>
+  </div>
+
+  <div *ngIf="!loading() && candidates().length > 0" class="candidates-grid">
+    <app-card *ngFor="let candidate of candidates()" class="candidate-card" [routerLink]="['/recruitment/candidates', candidate.id]">
+      <div class="candidate-header">
+        <div class="candidate-info">
+          <h3 class="candidate-name">{{ candidate.full_name || candidate.first_name + ' ' + candidate.last_name }}</h3>
+          <span class="candidate-email">{{ candidate.email }}</span>
+        </div>
+        <span [class]="'badge ' + getStatusBadgeClass(candidate.status)">
+          {{ candidate.status_display || candidate.status }}
+        </span>
+      </div>
+      <div class="candidate-content">
+        <div class="info-item" *ngIf="candidate.phone">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>{{ candidate.phone }}</span>
+        </div>
+        <div class="info-item" *ngIf="candidate.position_title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+            <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+            <path d="M20 8v6M23 11h-6" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>{{ candidate.position_title }}</span>
+        </div>
+        <div class="info-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>Postulé le {{ formatDate(candidate.applied_date) }}</span>
+        </div>
+      </div>
+      <div class="candidate-footer" *ngIf="canCreate()" (click)="$event.stopPropagation()">
+        <button class="icon-button" routerLink="/recruitment/candidates/{{ candidate.id }}/edit" aria-label="Modifier">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+        </button>
+        <button class="icon-button danger" (click)="deleteCandidate(candidate.id)" aria-label="Supprimer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+        </button>
+      </div>
+    </app-card>
+  </div>
+</div>
+

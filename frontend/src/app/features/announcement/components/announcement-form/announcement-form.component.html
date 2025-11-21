@@ -1,0 +1,81 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="announcement-form">
+  <div class="form-group">
+    <label for="title">Titre *</label>
+    <input
+      type="text"
+      id="title"
+      formControlName="title"
+      [class.invalid]="isFieldInvalid('title')"
+      placeholder="Entrez le titre de l'annonce"
+    />
+    <span class="error-message" *ngIf="isFieldInvalid('title')">
+      {{ getFieldError('title') }}
+    </span>
+  </div>
+
+  <div class="form-group">
+    <label for="content">Contenu *</label>
+    <textarea
+      id="content"
+      formControlName="content"
+      [class.invalid]="isFieldInvalid('content')"
+      rows="6"
+      placeholder="Entrez le contenu de l'annonce"
+    ></textarea>
+    <span class="error-message" *ngIf="isFieldInvalid('content')">
+      {{ getFieldError('content') }}
+    </span>
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" formControlName="visible_to_all" />
+      <span>Visible par tous les utilisateurs</span>
+    </label>
+  </div>
+
+  <div class="form-group" *ngIf="!form.get('visible_to_all')?.value">
+    <label for="departments">Départements *</label>
+    <select
+      id="departments"
+      formControlName="departments_ids"
+      multiple
+      [class.invalid]="isFieldInvalid('departments_ids')"
+    >
+      <option *ngFor="let dept of departments" [value]="dept.id">
+        {{ dept.name }}
+      </option>
+    </select>
+    <span class="error-message" *ngIf="isFieldInvalid('departments_ids')">
+      {{ getFieldError('departments_ids') }}
+    </span>
+    <small class="help-text">Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs départements</small>
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" formControlName="published" />
+      <span>Publier immédiatement</span>
+    </label>
+  </div>
+
+  <div class="form-actions">
+    <app-button
+      type="button"
+      variant="outline"
+      (clicked)="onCancel()"
+      [disabled]="loading"
+    >
+      Annuler
+    </app-button>
+    <app-button
+      type="submit"
+      variant="primary"
+      [loading]="loading"
+      [disabled]="form.invalid"
+    >
+      {{ announcement ? 'Modifier' : 'Créer' }}
+    </app-button>
+  </div>
+</form>
+

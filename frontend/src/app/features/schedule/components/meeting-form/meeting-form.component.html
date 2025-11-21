@@ -1,0 +1,135 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="meeting-form">
+  <div class="form-group">
+    <label for="title">Titre *</label>
+    <input
+      type="text"
+      id="title"
+      formControlName="title"
+      [class.invalid]="isFieldInvalid('title')"
+      placeholder="Ex: Réunion d'équipe hebdomadaire"
+    />
+    <span class="error-message" *ngIf="isFieldInvalid('title')">
+      {{ getFieldError('title') }}
+    </span>
+  </div>
+
+  <div class="form-group">
+    <label for="description">Description *</label>
+    <textarea
+      id="description"
+      formControlName="description"
+      [class.invalid]="isFieldInvalid('description')"
+      rows="5"
+      placeholder="Description et ordre du jour de la réunion..."
+    ></textarea>
+    <span class="error-message" *ngIf="isFieldInvalid('description')">
+      {{ getFieldError('description') }}
+    </span>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="start_time">Début *</label>
+      <input
+        type="datetime-local"
+        id="start_time"
+        formControlName="start_time"
+        [class.invalid]="isFieldInvalid('start_time')"
+      />
+      <span class="error-message" *ngIf="isFieldInvalid('start_time')">
+        {{ getFieldError('start_time') }}
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="end_time">Fin *</label>
+      <input
+        type="datetime-local"
+        id="end_time"
+        formControlName="end_time"
+        [class.invalid]="isFieldInvalid('end_time')"
+      />
+      <span class="error-message" *ngIf="isFieldInvalid('end_time')">
+        {{ getFieldError('end_time') }}
+      </span>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="location">Lieu</label>
+      <input
+        type="text"
+        id="location"
+        formControlName="location"
+        placeholder="Ex: Salle de conférence A"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="video_conference_link">Lien visioconférence</label>
+      <input
+        type="url"
+        id="video_conference_link"
+        formControlName="video_conference_link"
+        placeholder="https://meet.example.com/..."
+      />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="organizer">Organisateur</label>
+    <select
+      id="organizer"
+      formControlName="organizer"
+    >
+      <option [value]="null">Sélectionner un organisateur</option>
+      <option *ngFor="let employee of employees" [value]="employee.id">
+        {{ employee.full_name || employee.first_name + ' ' + employee.last_name }}
+      </option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Participants</label>
+    <div class="attendees-list">
+      <div *ngFor="let employee of employees" class="attendee-item">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [checked]="isAttendeeSelected(employee.id)"
+            (change)="onAttendeeToggle(employee.id)"
+          />
+          <span>{{ employee.full_name || employee.first_name + ' ' + employee.last_name }}</span>
+        </label>
+      </div>
+    </div>
+    <small class="help-text" *ngIf="selectedAttendees.length === 0">
+      Sélectionnez au moins un participant
+    </small>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="form-actions">
+    <app-button
+      type="button"
+      variant="outline"
+      (clicked)="onCancel()"
+      [disabled]="loading"
+    >
+      Annuler
+    </app-button>
+    <app-button
+      type="submit"
+      variant="primary"
+      [loading]="loading"
+      [disabled]="form.invalid || selectedAttendees.length === 0"
+    >
+      {{ meeting ? 'Enregistrer' : 'Créer' }}
+    </app-button>
+  </div>
+</form>
+

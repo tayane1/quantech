@@ -1,0 +1,153 @@
+<div class="profile">
+  <h1 class="profile-title">Mon Profil</h1>
+
+  <app-loading *ngIf="loading()" message="Chargement du profil..."></app-loading>
+
+  <div *ngIf="!loading() && user()" class="profile-content">
+    <!-- Profile Header -->
+    <app-card class="profile-header-card">
+      <div class="profile-header">
+        <div class="profile-avatar-wrapper">
+          <div class="profile-avatar">
+            <img
+              *ngIf="getProfileImageUrl()"
+              [src]="getProfileImageUrl()"
+              [alt]="getUserName()"
+            />
+            <div *ngIf="!getProfileImageUrl()" class="avatar-initials">
+              {{ getUserInitials() }}
+            </div>
+            <button 
+              *ngIf="getProfileImageUrl()" 
+              class="delete-photo-button"
+              (click)="deleteProfilePicture()"
+              type="button"
+              aria-label="Supprimer la photo"
+              title="Supprimer la photo"
+              [disabled]="saving()"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" fill="none"/>
+              </svg>
+            </button>
+          </div>
+          <div class="avatar-actions">
+            <input
+              #fileInput
+              type="file"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+              style="display: none"
+            />
+            <app-button
+              variant="outline"
+              (click)="triggerFileInput()"
+              [disabled]="saving()"
+            >
+              {{ getProfileImageUrl() ? 'Changer la photo' : 'Ajouter une photo' }}
+            </app-button>
+          </div>
+        </div>
+        <div class="profile-info">
+          <h2>{{ getUserName() }}</h2>
+          <p class="profile-email">{{ user()?.email }}</p>
+          <p class="profile-role" *ngIf="user()?.role_display">
+            {{ user()?.role_display }}
+          </p>
+        </div>
+      </div>
+    </app-card>
+
+    <!-- Profile Form -->
+    <app-card title="Informations personnelles">
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="first_name">Prénom *</label>
+            <input
+              type="text"
+              id="first_name"
+              formControlName="first_name"
+              [class.invalid]="isFieldInvalid('first_name')"
+            />
+            <span class="error-message" *ngIf="isFieldInvalid('first_name')">
+              {{ getFieldError('first_name') }}
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="last_name">Nom *</label>
+            <input
+              type="text"
+              id="last_name"
+              formControlName="last_name"
+              [class.invalid]="isFieldInvalid('last_name')"
+            />
+            <span class="error-message" *ngIf="isFieldInvalid('last_name')">
+              {{ getFieldError('last_name') }}
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            [class.invalid]="isFieldInvalid('email')"
+          />
+          <span class="error-message" *ngIf="isFieldInvalid('email')">
+            {{ getFieldError('email') }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Téléphone</label>
+          <input
+            type="tel"
+            id="phone"
+            formControlName="phone"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="bio">Biographie</label>
+          <textarea
+            id="bio"
+            formControlName="bio"
+            rows="4"
+            placeholder="Parlez-nous de vous..."
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <app-button
+            type="submit"
+            variant="primary"
+            [loading]="saving()"
+            [disabled]="profileForm.invalid"
+          >
+            Enregistrer les modifications
+          </app-button>
+        </div>
+      </form>
+    </app-card>
+
+    <!-- Security Section -->
+    <app-card title="Sécurité">
+      <div class="security-options">
+        <div class="security-item">
+          <div class="security-info">
+            <h3>Mot de passe</h3>
+            <p>Changez votre mot de passe régulièrement pour maintenir la sécurité de votre compte</p>
+          </div>
+          <app-button variant="outline" routerLink="/profile/change-password">
+            Changer le mot de passe
+          </app-button>
+        </div>
+      </div>
+    </app-card>
+  </div>
+</div>
+

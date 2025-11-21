@@ -1,0 +1,224 @@
+<div class="settings-dashboard">
+  <div class="dashboard-header">
+    <h1>Paramètres Système</h1>
+  </div>
+
+  <!-- Onglets -->
+  <div class="tabs">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab() === 'system'"
+      (click)="setActiveTab('system')">
+      Paramètres Système
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab() === 'email'"
+      (click)="setActiveTab('email')">
+      Modèles d'Email
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab() === 'notifications'"
+      (click)="setActiveTab('notifications')">
+      Notifications
+    </button>
+  </div>
+
+  <!-- Onglet Paramètres Système -->
+  <div class="tab-content" *ngIf="activeTab() === 'system'">
+    <app-card title="Paramètres Généraux">
+      <app-loading *ngIf="loading()"></app-loading>
+
+      <form *ngIf="!loading() && systemSettings()" (ngSubmit)="saveSystemSettings()" #settingsForm="ngForm">
+        <div class="form-group">
+          <label>Nom de l'entreprise</label>
+          <input 
+            type="text" 
+            [(ngModel)]="systemSettings()!.company_name" 
+            name="company_name"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Email de l'entreprise</label>
+          <input 
+            type="email" 
+            [(ngModel)]="systemSettings()!.company_email" 
+            name="company_email"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Nom du site</label>
+          <input 
+            type="text" 
+            [(ngModel)]="systemSettings()!.site_name" 
+            name="site_name"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Devise</label>
+          <select 
+            [(ngModel)]="systemSettings()!.currency" 
+            name="currency"
+            class="form-control">
+            <option *ngFor="let currency of currencies" [value]="currency.code">
+              {{ currency.code }} - {{ currency.name }}
+            </option>
+          </select>
+          <small class="form-text text-muted">Sélectionnez la devise utilisée dans votre entreprise</small>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input 
+              type="checkbox" 
+              [(ngModel)]="systemSettings()!.maintenance_mode" 
+              name="maintenance_mode">
+            Mode maintenance
+          </label>
+        </div>
+
+        <div class="form-group" *ngIf="systemSettings()!.maintenance_mode">
+          <label>Message de maintenance</label>
+          <textarea 
+            [(ngModel)]="systemSettings()!.maintenance_message" 
+            name="maintenance_message"
+            class="form-control"
+            rows="3"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            <span *ngIf="saving()">Enregistrement...</span>
+            <span *ngIf="!saving()">Enregistrer</span>
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="resetSystemSettings()" [disabled]="saving()">
+            Réinitialiser
+          </button>
+        </div>
+      </form>
+    </app-card>
+
+    <app-card title="Paramètres de Sécurité">
+      <form *ngIf="systemSettings()" (ngSubmit)="saveSystemSettings()">
+        <div class="form-group">
+          <label>Longueur minimale du mot de passe</label>
+          <input 
+            type="number" 
+            [(ngModel)]="systemSettings()!.password_min_length" 
+            name="password_min_length"
+            class="form-control"
+            min="8">
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input 
+              type="checkbox" 
+              [(ngModel)]="systemSettings()!.password_require_uppercase" 
+              name="password_require_uppercase">
+            Requérir majuscules
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input 
+              type="checkbox" 
+              [(ngModel)]="systemSettings()!.password_require_lowercase" 
+              name="password_require_lowercase">
+            Requérir minuscules
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input 
+              type="checkbox" 
+              [(ngModel)]="systemSettings()!.password_require_numbers" 
+              name="password_require_numbers">
+            Requérir chiffres
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input 
+              type="checkbox" 
+              [(ngModel)]="systemSettings()!.password_require_special" 
+              name="password_require_special">
+            Requérir caractères spéciaux
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>Timeout de session (minutes)</label>
+          <input 
+            type="number" 
+            [(ngModel)]="systemSettings()!.session_timeout_minutes" 
+            name="session_timeout_minutes"
+            class="form-control">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </app-card>
+  </div>
+
+  <!-- Onglet Modèles d'Email -->
+  <div class="tab-content" *ngIf="activeTab() === 'email'">
+    <app-card title="Modèles d'Email">
+      <div class="email-templates-list" *ngIf="emailTemplates().length > 0">
+        <div class="template-item" *ngFor="let template of emailTemplates()">
+          <div class="template-header">
+            <h3>{{ template.name }}</h3>
+            <span [class]="'badge ' + (template.is_active ? 'badge-success' : 'badge-secondary')">
+              {{ template.is_active ? 'Actif' : 'Inactif' }}
+            </span>
+          </div>
+          <div class="template-meta">
+            <span>Type: {{ template.template_type }}</span>
+            <span>Sujet: {{ template.subject }}</span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="emailTemplates().length === 0" class="empty-state">
+        Aucun modèle d'email
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Onglet Notifications -->
+  <div class="tab-content" *ngIf="activeTab() === 'notifications'">
+    <app-card title="Paramètres de Notifications">
+      <div class="notifications-list" *ngIf="notificationSettings().length > 0">
+        <div class="notification-item" *ngFor="let setting of notificationSettings()">
+          <div class="notification-info">
+            <h4>{{ setting.name }}</h4>
+            <p *ngIf="setting.description">{{ setting.description }}</p>
+          </div>
+          <div class="notification-actions">
+            <label class="switch">
+              <input 
+                type="checkbox" 
+                [checked]="setting.enabled"
+                (change)="toggleNotificationSetting(setting)">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="notificationSettings().length === 0" class="empty-state">
+        Aucun paramètre de notification
+      </div>
+    </app-card>
+  </div>
+</div>
+

@@ -1,0 +1,162 @@
+.job-position-list {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: #333;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+
+  p {
+    color: #666;
+    margin-bottom: 20px;
+  }
+}
+
+.positions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.position-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.position-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+
+  .position-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+    flex: 1;
+  }
+
+  .badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    margin-left: 10px;
+
+    &.badge-success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    &.badge-secondary {
+      background: #e2e3e5;
+      color: #383d41;
+    }
+
+    &.badge-warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+  }
+}
+
+.position-content {
+  .position-description {
+    color: #666;
+    font-size: 0.875rem;
+    margin: 0 0 12px 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .position-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 0.875rem;
+    color: #666;
+
+    .urgent {
+      background: #fee;
+      color: #e74c3c;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+  }
+}
+
+.position-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+
+  .icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+
+    &:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    &.danger:hover {
+      background: #fee;
+      color: #e74c3c;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .positions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+}
+

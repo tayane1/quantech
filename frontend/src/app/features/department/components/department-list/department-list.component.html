@@ -1,0 +1,81 @@
+<div class="department-list">
+  <div class="page-header">
+    <h1>Départements</h1>
+    <app-button
+      *ngIf="canCreate()"
+      variant="primary"
+      routerLink="/department/create"
+    >
+      Créer un département
+    </app-button>
+  </div>
+
+  <app-loading *ngIf="loading()" message="Chargement des départements..."></app-loading>
+
+  <div *ngIf="!loading() && departments().length === 0" class="empty-state">
+    <app-card>
+      <p>Aucun département trouvé</p>
+      <app-button *ngIf="canCreate()" variant="primary" routerLink="/department/create">
+        Créer le premier département
+      </app-button>
+    </app-card>
+  </div>
+
+  <div *ngIf="!loading() && departments().length > 0" class="departments-grid">
+    <app-card *ngFor="let department of departments()" class="department-card" [routerLink]="['/department', department.id]" [style.cursor]="'pointer'">
+      <div class="department-header">
+        <h3 class="department-name">{{ department.name }}</h3>
+        <span class="department-code">{{ department.code }}</span>
+      </div>
+      <div class="department-content">
+        <div class="department-info">
+          <div class="info-item" *ngIf="department.manager_name">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span>{{ department.manager_name }}</span>
+          </div>
+          <div class="info-item" *ngIf="department.location">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span>{{ department.location }}</span>
+          </div>
+          <div class="info-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+              <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span>{{ department.employee_count || 0 }} employé(s)</span>
+          </div>
+        </div>
+        <div class="department-stats" *ngIf="department.budget">
+          <div class="stat-item">
+            <span class="stat-label">Budget</span>
+            <span class="stat-value">{{ formatBudget(department.budget) }}</span>
+          </div>
+        </div>
+        <p class="department-description" *ngIf="department.description">
+          {{ department.description }}
+        </p>
+      </div>
+      <div class="department-footer" *ngIf="canCreate()" (click)="$event.stopPropagation()">
+        <button class="icon-button" routerLink="/department/{{ department.id }}/edit" aria-label="Modifier">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+        </button>
+        <button class="icon-button danger" (click)="deleteDepartment(department.id)" aria-label="Supprimer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+        </button>
+      </div>
+    </app-card>
+  </div>
+</div>
+

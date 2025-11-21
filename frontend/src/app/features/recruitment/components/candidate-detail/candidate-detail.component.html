@@ -1,0 +1,93 @@
+<div class="candidate-detail">
+  <app-loading *ngIf="loading()" message="Chargement du candidat..."></app-loading>
+
+  <div *ngIf="!loading() && candidate()" class="detail-content">
+    <div class="detail-header">
+      <div>
+        <h1>{{ candidate()!.full_name || candidate()!.first_name + ' ' + candidate()!.last_name }}</h1>
+        <span [class]="'badge ' + getStatusBadgeClass(candidate()!.status)">
+          {{ getStatusDisplay(candidate()!.status) }}
+        </span>
+      </div>
+      <div class="header-actions" *ngIf="canEdit()">
+        <app-button variant="outline" *ngIf="candidate()!.resume" (clicked)="downloadResume()">
+          Télécharger CV
+        </app-button>
+        <app-button variant="primary" routerLink="/recruitment/candidates/{{ candidate()!.id }}/edit">
+          Modifier
+        </app-button>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <app-card title="Informations personnelles">
+        <div class="info-list">
+          <div class="info-item">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ candidate()!.email }}</span>
+          </div>
+          <div class="info-item" *ngIf="candidate()!.phone">
+            <span class="info-label">Téléphone</span>
+            <span class="info-value">{{ candidate()!.phone }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Date de candidature</span>
+            <span class="info-value">{{ formatDate(candidate()!.applied_date) }}</span>
+          </div>
+          <div class="info-item" *ngIf="candidate()!.interview_date">
+            <span class="info-label">Date d'entretien</span>
+            <span class="info-value">{{ formatDate(candidate()!.interview_date!) }}</span>
+          </div>
+        </div>
+      </app-card>
+
+      <app-card title="Poste">
+        <div class="info-list" *ngIf="jobPosition()">
+          <div class="info-item">
+            <span class="info-label">Poste</span>
+            <span class="info-value">
+              <a [routerLink]="['/recruitment/positions', jobPosition()!.id]">
+                {{ jobPosition()!.title }}
+              </a>
+            </span>
+          </div>
+          <div class="info-item" *ngIf="jobPosition()!.department_name">
+            <span class="info-label">Département</span>
+            <span class="info-value">{{ jobPosition()!.department_name }}</span>
+          </div>
+        </div>
+        <p *ngIf="!jobPosition()">Aucun poste associé</p>
+      </app-card>
+
+      <app-card title="Lettre de motivation" *ngIf="candidate()!.cover_letter">
+        <div class="cover-letter">
+          <p>{{ candidate()!.cover_letter }}</p>
+        </div>
+      </app-card>
+
+      <app-card title="Notes" *ngIf="candidate()!.notes">
+        <div class="notes">
+          <p>{{ candidate()!.notes }}</p>
+        </div>
+      </app-card>
+
+      <app-card title="Documents">
+        <div class="info-list">
+          <div class="info-item">
+            <span class="info-label">CV</span>
+            <span class="info-value">
+              <button 
+                *ngIf="candidate()!.resume" 
+                class="download-button" 
+                (click)="downloadResume()">
+                Télécharger le CV
+              </button>
+              <span *ngIf="!candidate()!.resume" class="no-document">Aucun CV disponible</span>
+            </span>
+          </div>
+        </div>
+      </app-card>
+    </div>
+  </div>
+</div>
+

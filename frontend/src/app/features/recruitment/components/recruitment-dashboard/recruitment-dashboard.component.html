@@ -1,0 +1,124 @@
+<div class="recruitment-dashboard">
+  <div class="dashboard-header">
+    <h1>Recrutement</h1>
+    <div class="header-actions" *ngIf="canCreate()">
+      <app-button variant="primary" routerLink="/recruitment/positions/create">
+        Créer un poste
+      </app-button>
+      <app-button variant="outline" routerLink="/recruitment/candidates/create">
+        Ajouter un candidat
+      </app-button>
+    </div>
+  </div>
+
+  <app-loading *ngIf="loading()" message="Chargement..."></app-loading>
+
+  <!-- Statistiques -->
+  <div class="stats-grid" *ngIf="!loading() && statistics()">
+    <app-card>
+      <div class="stat-item">
+        <div class="stat-value">{{ statistics()!.total_positions || 0 }}</div>
+        <div class="stat-label">Total Postes</div>
+      </div>
+    </app-card>
+    <app-card>
+      <div class="stat-item">
+        <div class="stat-value">{{ statistics()!.open_positions || 0 }}</div>
+        <div class="stat-label">Postes Ouverts</div>
+      </div>
+    </app-card>
+    <app-card>
+      <div class="stat-item">
+        <div class="stat-value">{{ statistics()!.total_candidates || 0 }}</div>
+        <div class="stat-label">Total Candidats</div>
+      </div>
+    </app-card>
+    <app-card>
+      <div class="stat-item">
+        <div class="stat-value">{{ statistics()!.active_processes || 0 }}</div>
+        <div class="stat-label">Processus Actifs</div>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Postes ouverts -->
+  <app-card title="Postes Ouverts" class="section-card">
+    <app-loading *ngIf="loading()" message="Chargement..."></app-loading>
+    
+    <div *ngIf="!loading() && openPositions().length === 0" class="empty-state">
+      <p>Aucun poste ouvert</p>
+    </div>
+
+    <div *ngIf="!loading() && openPositions().length > 0" class="positions-list">
+      <div class="position-item" *ngFor="let position of openPositions()" [routerLink]="['/recruitment/positions', position.id]">
+        <div class="position-header">
+          <h3>{{ position.title }}</h3>
+          <span [class]="'badge ' + getStatusBadgeClass(position.status)">
+            {{ position.status === 'open' ? 'Ouvert' : position.status === 'closed' ? 'Fermé' : 'En attente' }}
+          </span>
+        </div>
+        <div class="position-content">
+          <p *ngIf="position.department_name">{{ position.department_name }}</p>
+          <div class="position-stats">
+            <span *ngIf="position.candidates_count !== undefined">
+              {{ position.candidates_count }} candidat(s)
+            </span>
+            <span *ngIf="position.urgency" class="urgent">Urgent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!loading() && openPositions().length > 0" class="card-footer">
+      <a routerLink="/recruitment/positions" class="view-all-link">Voir tous les postes →</a>
+    </div>
+  </app-card>
+
+  <!-- Candidats récents -->
+  <app-card title="Candidats Récents" class="section-card">
+    <div *ngIf="recentCandidates().length === 0" class="empty-state">
+      <p>Aucun candidat</p>
+    </div>
+
+    <div *ngIf="recentCandidates().length > 0" class="candidates-list">
+      <div class="candidate-item" *ngFor="let candidate of recentCandidates()" [routerLink]="['/recruitment/candidates', candidate.id]">
+        <div class="candidate-header">
+          <h4>{{ candidate.full_name || candidate.first_name + ' ' + candidate.last_name }}</h4>
+          <span [class]="'badge ' + getCandidateStatusBadgeClass(candidate.status)">
+            {{ candidate.status_display || candidate.status }}
+          </span>
+        </div>
+        <div class="candidate-content">
+          <p>{{ candidate.email }}</p>
+          <span class="candidate-date">Postulé le {{ formatDate(candidate.applied_date) }}</span>
+          <span *ngIf="candidate.position_title">Pour: {{ candidate.position_title }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="recentCandidates().length > 0" class="card-footer">
+      <a routerLink="/recruitment/candidates" class="view-all-link">Voir tous les candidats →</a>
+    </div>
+  </app-card>
+
+  <!-- Processus actifs -->
+  <app-card title="Processus de Recrutement Actifs" class="section-card" *ngIf="activeProcesses().length > 0">
+    <div class="processes-list">
+      <div class="process-item" *ngFor="let process of activeProcesses()" [routerLink]="['/recruitment/processes', process.id]">
+        <div class="process-header">
+          <h4>{{ process.candidate_name || 'Candidat' }}</h4>
+          <span class="process-stage">{{ process.stage_display || process.stage }}</span>
+        </div>
+        <div class="process-content">
+          <p *ngIf="process.position_title">{{ process.position_title }}</p>
+          <span *ngIf="process.interview_date">Entretien: {{ formatDate(process.interview_date) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <a routerLink="/recruitment/processes" class="view-all-link">Voir tous les processus →</a>
+    </div>
+  </app-card>
+</div>
+

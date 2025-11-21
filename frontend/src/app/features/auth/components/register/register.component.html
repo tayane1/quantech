@@ -1,0 +1,119 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <h1>WeHR</h1>
+      <p>Créer un compte</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first_name">Prénom *</label>
+          <input
+            type="text"
+            id="first_name"
+            formControlName="first_name"
+            [class.invalid]="isFieldInvalid('first_name')"
+            placeholder="Entrez votre prénom"
+          />
+          <span class="error-message" *ngIf="isFieldInvalid('first_name')">
+            {{ getFieldError('first_name') }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="last_name">Nom *</label>
+          <input
+            type="text"
+            id="last_name"
+            formControlName="last_name"
+            [class.invalid]="isFieldInvalid('last_name')"
+            placeholder="Entrez votre nom"
+          />
+          <span class="error-message" *ngIf="isFieldInvalid('last_name')">
+            {{ getFieldError('last_name') }}
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur *</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          [class.invalid]="isFieldInvalid('username')"
+          placeholder="Choisissez un nom d'utilisateur"
+        />
+        <span class="error-message" *ngIf="isFieldInvalid('username')">
+          {{ getFieldError('username') }}
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          [class.invalid]="isFieldInvalid('email')"
+          placeholder="Entrez votre email"
+        />
+        <span class="error-message" *ngIf="isFieldInvalid('email')">
+          {{ getFieldError('email') }}
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe *</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          [class.invalid]="isFieldInvalid('password') || registerForm.hasError('passwordMismatch')"
+          placeholder="Créez un mot de passe"
+        />
+        <span class="error-message" *ngIf="isFieldInvalid('password')">
+          {{ getFieldError('password') }}
+        </span>
+        <small class="help-text">Minimum 8 caractères</small>
+      </div>
+
+      <div class="form-group">
+        <label for="password_confirm">Confirmer le mot de passe *</label>
+        <input
+          type="password"
+          id="password_confirm"
+          formControlName="password_confirm"
+          [class.invalid]="isFieldInvalid('password_confirm') || registerForm.hasError('passwordMismatch')"
+          placeholder="Confirmez votre mot de passe"
+        />
+        <span class="error-message" *ngIf="isFieldInvalid('password_confirm')">
+          {{ getFieldError('password_confirm') }}
+        </span>
+        <span class="error-message" *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('password_confirm')?.touched">
+          {{ getFormError() }}
+        </span>
+      </div>
+
+      <div class="error-message" *ngIf="error()">
+        {{ error() }}
+      </div>
+
+      <app-button
+        type="submit"
+        variant="primary"
+        [loading]="loading()"
+        [disabled]="registerForm.invalid"
+        class="register-button"
+      >
+        S'inscrire
+      </app-button>
+
+      <div class="login-link">
+        <p>Déjà un compte ? <a routerLink="/login">Se connecter</a></p>
+      </div>
+    </form>
+  </div>
+</div>
+

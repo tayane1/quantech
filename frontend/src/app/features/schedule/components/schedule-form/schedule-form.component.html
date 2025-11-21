@@ -1,0 +1,108 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="schedule-form">
+  <div class="form-group">
+    <label for="title">Titre *</label>
+    <input
+      type="text"
+      id="title"
+      formControlName="title"
+      [class.invalid]="isFieldInvalid('title')"
+      placeholder="Ex: Révision du budget Q1"
+    />
+    <span class="error-message" *ngIf="isFieldInvalid('title')">
+      {{ getFieldError('title') }}
+    </span>
+  </div>
+
+  <div class="form-group">
+    <label for="description">Description *</label>
+    <textarea
+      id="description"
+      formControlName="description"
+      [class.invalid]="isFieldInvalid('description')"
+      rows="5"
+      placeholder="Description détaillée de la tâche..."
+    ></textarea>
+    <span class="error-message" *ngIf="isFieldInvalid('description')">
+      {{ getFieldError('description') }}
+    </span>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="assigned_to">Assigné à *</label>
+      <select
+        id="assigned_to"
+        formControlName="assigned_to"
+        [class.invalid]="isFieldInvalid('assigned_to')"
+      >
+        <option [value]="null">Sélectionner un employé</option>
+        <option *ngFor="let employee of employees" [value]="employee.id">
+          {{ employee.full_name || employee.first_name + ' ' + employee.last_name }}
+        </option>
+      </select>
+      <span class="error-message" *ngIf="isFieldInvalid('assigned_to')">
+        {{ getFieldError('assigned_to') }}
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="priority">Priorité *</label>
+      <select
+        id="priority"
+        formControlName="priority"
+        [class.invalid]="isFieldInvalid('priority')"
+      >
+        <option *ngFor="let option of priorityOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+      <span class="error-message" *ngIf="isFieldInvalid('priority')">
+        {{ getFieldError('priority') }}
+      </span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="scheduled_date">Date planifiée *</label>
+    <input
+      type="datetime-local"
+      id="scheduled_date"
+      formControlName="scheduled_date"
+      [class.invalid]="isFieldInvalid('scheduled_date')"
+    />
+    <span class="error-message" *ngIf="isFieldInvalid('scheduled_date')">
+      {{ getFieldError('scheduled_date') }}
+    </span>
+  </div>
+
+  <div class="form-group" *ngIf="schedule">
+    <label class="checkbox-label">
+      <input type="checkbox" formControlName="completed" />
+      <span>Tâche complétée</span>
+    </label>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="form-actions">
+    <app-button
+      type="button"
+      variant="outline"
+      (clicked)="onCancel()"
+      [disabled]="loading"
+    >
+      Annuler
+    </app-button>
+    <app-button
+      type="submit"
+      variant="primary"
+      [loading]="loading"
+      [disabled]="form.invalid"
+    >
+      {{ schedule ? 'Enregistrer' : 'Créer' }}
+    </app-button>
+  </div>
+</form>
+

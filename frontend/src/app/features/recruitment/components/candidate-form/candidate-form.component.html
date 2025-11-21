@@ -1,0 +1,163 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="candidate-form">
+  <div class="form-row">
+    <div class="form-group">
+      <label for="first_name">Prénom *</label>
+      <input
+        type="text"
+        id="first_name"
+        formControlName="first_name"
+        [class.invalid]="isFieldInvalid('first_name')"
+        placeholder="Prénom"
+      />
+      <span class="error-message" *ngIf="isFieldInvalid('first_name')">
+        {{ getFieldError('first_name') }}
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="last_name">Nom *</label>
+      <input
+        type="text"
+        id="last_name"
+        formControlName="last_name"
+        [class.invalid]="isFieldInvalid('last_name')"
+        placeholder="Nom"
+      />
+      <span class="error-message" *ngIf="isFieldInvalid('last_name')">
+        {{ getFieldError('last_name') }}
+      </span>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="email">Email *</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        [class.invalid]="isFieldInvalid('email')"
+        placeholder="email@example.com"
+      />
+      <span class="error-message" *ngIf="isFieldInvalid('email')">
+        {{ getFieldError('email') }}
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Téléphone *</label>
+      <input
+        type="tel"
+        id="phone"
+        formControlName="phone"
+        [class.invalid]="isFieldInvalid('phone')"
+        placeholder="+33 6 12 34 56 78"
+      />
+      <span class="error-message" *ngIf="isFieldInvalid('phone')">
+        {{ getFieldError('phone') }}
+      </span>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="position">Poste *</label>
+      <select
+        id="position"
+        formControlName="position"
+        [class.invalid]="isFieldInvalid('position')"
+      >
+        <option [value]="null">Sélectionner un poste</option>
+        <option *ngFor="let position of jobPositions" [value]="position.id">
+          {{ position.title }}
+        </option>
+      </select>
+      <span class="error-message" *ngIf="isFieldInvalid('position')">
+        {{ getFieldError('position') }}
+      </span>
+    </div>
+
+    <div class="form-group" *ngIf="candidate">
+      <label for="status">Statut *</label>
+      <select
+        id="status"
+        formControlName="status"
+        [class.invalid]="isFieldInvalid('status')"
+      >
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+      <span class="error-message" *ngIf="isFieldInvalid('status')">
+        {{ getFieldError('status') }}
+      </span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="cover_letter">Lettre de motivation</label>
+    <textarea
+      id="cover_letter"
+      formControlName="cover_letter"
+      rows="5"
+      placeholder="Lettre de motivation (optionnel)"
+    ></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="resume">CV *</label>
+    <div class="file-upload">
+      <input
+        type="file"
+        id="resume"
+        accept=".pdf,.doc,.docx"
+        (change)="onResumeSelected($event)"
+        [required]="!candidate"
+      />
+      <div class="file-info" *ngIf="resumePreview">
+        <span class="file-name">{{ resumeFile?.name || 'CV téléchargé' }}</span>
+        <button type="button" class="remove-file" (click)="resumeFile = null; resumePreview = null">
+          ×
+        </button>
+      </div>
+      <small class="help-text">Formats acceptés: PDF, DOC, DOCX (max 5MB)</small>
+    </div>
+    <span class="error-message" *ngIf="!candidate && !resumeFile && form.get('resume')?.touched">
+      Le CV est requis
+    </span>
+  </div>
+
+  <div class="form-group" *ngIf="candidate">
+    <label for="notes">Notes</label>
+    <textarea
+      id="notes"
+      formControlName="notes"
+      rows="4"
+      placeholder="Notes internes sur le candidat"
+    ></textarea>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="form-actions">
+    <app-button
+      type="button"
+      variant="outline"
+      (clicked)="onCancel()"
+      [disabled]="loading"
+    >
+      Annuler
+    </app-button>
+    <app-button
+      type="submit"
+      variant="primary"
+      [loading]="loading"
+      [disabled]="form.invalid || (!candidate && !resumeFile)"
+    >
+      {{ candidate ? 'Enregistrer' : 'Créer' }}
+    </app-button>
+  </div>
+</form>
+

@@ -1,0 +1,187 @@
+<div class="schedule-list">
+  <div class="page-header">
+    <h1>Planning</h1>
+    <div class="header-actions" *ngIf="canCreate()">
+      <app-button
+        *ngIf="activeTab() === 'tasks'"
+        variant="primary"
+        routerLink="/schedule/tasks/create"
+      >
+        Nouvelle tâche
+      </app-button>
+      <app-button
+        *ngIf="activeTab() === 'meetings'"
+        variant="primary"
+        routerLink="/schedule/meetings/create"
+      >
+        Nouvelle réunion
+      </app-button>
+    </div>
+  </div>
+
+  <!-- Onglets -->
+  <div class="tabs">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab() === 'tasks'"
+      (click)="onTabChange('tasks')">
+      Tâches
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab() === 'meetings'"
+      (click)="onTabChange('meetings')">
+      Réunions
+    </button>
+  </div>
+
+  <!-- Tâches -->
+  <div *ngIf="activeTab() === 'tasks'" class="tab-content">
+    <app-card class="filters-card">
+      <div class="filters-row">
+        <div class="filter-group">
+          <label>Filtre:</label>
+          <select [value]="taskFilter()" (change)="onTaskFilterChange($any($event.target).value)" class="filter-select">
+            <option value="all">Toutes</option>
+            <option value="pending">En attente</option>
+            <option value="completed">Terminées</option>
+          </select>
+        </div>
+      </div>
+    </app-card>
+
+    <app-loading *ngIf="loading()" message="Chargement des tâches..."></app-loading>
+
+    <div *ngIf="!loading() && schedules().length === 0" class="empty-state">
+      <app-card>
+        <p>Aucune tâche trouvée</p>
+      </app-card>
+    </div>
+
+    <div *ngIf="!loading() && schedules().length > 0" class="schedules-grid">
+      <app-card *ngFor="let schedule of schedules()" class="schedule-card" [class.overdue]="isOverdue(schedule.scheduled_date, schedule.completed)" [class.completed]="schedule.completed">
+        <div class="schedule-header">
+          <div class="schedule-title-row">
+            <h3 class="schedule-title">{{ schedule.title }}</h3>
+            <label class="checkbox-container">
+              <input 
+                type="checkbox" 
+                [checked]="schedule.completed"
+                (change)="toggleScheduleComplete(schedule)"
+              />
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <span [class]="'badge ' + getPriorityBadgeClass(schedule.priority)">
+            {{ schedule.priority === 'high' ? 'Élevée' : schedule.priority === 'medium' ? 'Moyenne' : 'Basse' }}
+          </span>
+        </div>
+        <div class="schedule-content">
+          <p class="schedule-description">{{ schedule.description }}</p>
+          <div class="schedule-info">
+            <div class="info-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                <polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>{{ formatDate(schedule.scheduled_date) }}</span>
+            </div>
+            <div class="info-item" *ngIf="schedule.assigned_to_name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>{{ schedule.assigned_to_name }}</span>
+            </div>
+            <div class="info-item" *ngIf="schedule.assigned_by_name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+                <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                <path d="M20 8v6M23 11h-6" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>Par {{ schedule.assigned_by_name }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="schedule-footer" *ngIf="canCreate()" (click)="$event.stopPropagation()">
+          <button class="icon-button danger" (click)="deleteSchedule(schedule.id)" aria-label="Supprimer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </button>
+        </div>
+      </app-card>
+    </div>
+  </div>
+
+  <!-- Réunions -->
+  <div *ngIf="activeTab() === 'meetings'" class="tab-content">
+    <app-loading *ngIf="loading()" message="Chargement des réunions..."></app-loading>
+
+    <div *ngIf="!loading() && meetings().length === 0" class="empty-state">
+      <app-card>
+        <p>Aucune réunion à venir</p>
+        <app-button *ngIf="canCreate()" variant="primary" routerLink="/schedule/meetings/create">
+          Créer une réunion
+        </app-button>
+      </app-card>
+    </div>
+
+    <div *ngIf="!loading() && meetings().length > 0" class="meetings-grid">
+      <app-card *ngFor="let meeting of meetings()" class="meeting-card">
+        <div class="meeting-header">
+          <h3 class="meeting-title">{{ meeting.title }}</h3>
+        </div>
+        <div class="meeting-content">
+          <p class="meeting-description">{{ meeting.description }}</p>
+          <div class="meeting-info">
+            <div class="info-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                <polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>Début: {{ formatDate(meeting.start_time) }}</span>
+            </div>
+            <div class="info-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                <polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>Fin: {{ formatDate(meeting.end_time) }}</span>
+            </div>
+            <div class="info-item" *ngIf="meeting.location">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>{{ meeting.location }}</span>
+            </div>
+            <div class="info-item" *ngIf="meeting.organizer_name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>Organisé par {{ meeting.organizer_name }}</span>
+            </div>
+            <div class="info-item" *ngIf="meeting.attendees_names && meeting.attendees_names.length > 0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>{{ meeting.attendees_names.length }} participant(s)</span>
+            </div>
+          </div>
+        </div>
+        <div class="meeting-footer" *ngIf="canCreate()" (click)="$event.stopPropagation()">
+          <button class="icon-button danger" (click)="deleteMeeting(meeting.id)" aria-label="Supprimer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </button>
+        </div>
+      </app-card>
+    </div>
+  </div>
+</div>
+

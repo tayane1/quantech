@@ -1,0 +1,60 @@
+<div class="announcement-list">
+  <div class="page-header">
+    <h1>Annonces</h1>
+    <app-button
+      *ngIf="canCreate()"
+      variant="primary"
+      routerLink="/announcement/create"
+    >
+      Créer une annonce
+    </app-button>
+  </div>
+
+  <app-loading *ngIf="loading()" message="Chargement des annonces..."></app-loading>
+
+  <div *ngIf="!loading()" class="announcements-grid">
+    <app-card *ngFor="let announcement of announcements()" class="announcement-card" [routerLink]="['/announcement', announcement.id]" [style.cursor]="'pointer'">
+      <div class="announcement-header">
+        <h3 class="announcement-title">{{ announcement.title }}</h3>
+        <div class="announcement-meta">
+          <span class="announcement-author" *ngIf="announcement.author_name">
+            Par {{ announcement.author_name }}
+          </span>
+          <span class="announcement-date">{{ getRelativeTime(announcement.published_date) }}</span>
+        </div>
+      </div>
+      <div class="announcement-content">
+        <p>{{ truncateContent(announcement.content) }}</p>
+      </div>
+      <div class="announcement-footer">
+        <div class="announcement-tags">
+          <span class="tag" *ngIf="announcement.visible_to_all">Visible par tous</span>
+          <span class="tag" *ngIf="!announcement.visible_to_all && announcement.departments_names">
+            {{ announcement.departments_names.length }} département(s)
+          </span>
+          <span class="tag" [class.published]="announcement.published" [class.draft]="!announcement.published">
+            {{ announcement.published ? 'Publié' : 'Brouillon' }}
+          </span>
+        </div>
+        <div class="announcement-actions" *ngIf="canCreate()" (click)="$event.stopPropagation()">
+          <button class="icon-button" routerLink="/announcement/{{ announcement.id }}/edit" aria-label="Edit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </button>
+          <button class="icon-button" (click)="deleteAnnouncement(announcement.id)" aria-label="Delete">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </app-card>
+  </div>
+
+  <div *ngIf="!loading() && announcements().length === 0" class="empty-state">
+    <p>Aucune annonce disponible</p>
+  </div>
+</div>
+

@@ -1,0 +1,130 @@
+.candidate-form {
+  max-width: 800px;
+  margin: 0 auto;
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+      font-family: inherit;
+
+      &:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      &.invalid {
+        border-color: #e74c3c;
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-size: 0.875rem;
+      margin-top: 5px;
+      display: block;
+    }
+
+    .help-text {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .file-upload {
+      input[type="file"] {
+        padding: 8px;
+        cursor: pointer;
+      }
+
+      .file-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 10px;
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: 6px;
+
+        .file-name {
+          flex: 1;
+          color: #333;
+          font-weight: 500;
+        }
+
+        .remove-file {
+          background: #e74c3c;
+          color: white;
+          border: none;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+          line-height: 1;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background: #c0392b;
+          }
+        }
+      }
+    }
+  }
+
+  .error-message {
+    background: #fee;
+    color: #e74c3c;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 30px;
+  }
+}
+

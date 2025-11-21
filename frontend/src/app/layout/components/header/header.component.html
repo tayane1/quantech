@@ -1,0 +1,117 @@
+<header class="header">
+  <!-- Mobile Header -->
+  <div class="header-mobile">
+    <div class="header-left">
+      <span class="device-label">Dashboard - Mobile</span>
+      <button class="menu-toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="header-right">
+      <button class="icon-button" aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+          <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <app-notification-dropdown></app-notification-dropdown>
+      <app-message-dropdown></app-message-dropdown>
+      <div class="user-menu" *ngIf="user()">
+        <button class="user-button" (click)="toggleUserMenu()">
+          <img *ngIf="getUserImageUrl()" [src]="getUserImageUrl()" [alt]="getUserName()" class="user-avatar">
+          <div *ngIf="!getUserImageUrl()" class="user-avatar-initials">{{ getUserInitials() }}</div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="user-dropdown" *ngIf="showUserMenu()">
+          <div class="user-info">
+            <strong>{{ getUserName() }}</strong>
+            <span>{{ user()?.email }}</span>
+          </div>
+          <a routerLink="/profile">Mon profil</a>
+          <a routerLink="/settings">Paramètres</a>
+          <button (click)="logout()">Déconnexion</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tablet Header -->
+  <div class="header-tablet">
+    <div class="header-left">
+      <span class="device-label">Dashboard - Tablet</span>
+      <div class="logo">WeHR</div>
+      <div class="search-bar">
+        <input type="text" placeholder="Search" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+          <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="header-right">
+      <app-notification-dropdown></app-notification-dropdown>
+      <app-message-dropdown></app-message-dropdown>
+      <div class="user-menu" *ngIf="user()">
+        <button class="user-button" (click)="toggleUserMenu()">
+          <img *ngIf="getUserImageUrl()" [src]="getUserImageUrl()" [alt]="getUserName()" class="user-avatar">
+          <div *ngIf="!getUserImageUrl()" class="user-avatar-initials">{{ getUserInitials() }}</div>
+          <span class="user-name">{{ getUserName() }}</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="user-dropdown" *ngIf="showUserMenu()">
+          <div class="user-info">
+            <strong>{{ getUserName() }}</strong>
+            <span>{{ user()?.email }}</span>
+          </div>
+          <a routerLink="/profile">Mon profil</a>
+          <a routerLink="/settings">Paramètres</a>
+          <button (click)="logout()">Déconnexion</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop Header -->
+  <div class="header-desktop">
+    <div class="header-left">
+      <span class="device-label">Dashboard Desktop</span>
+      <div class="search-bar">
+        <input type="text" placeholder="Search" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+          <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="header-right">
+      <app-notification-dropdown></app-notification-dropdown>
+      <app-message-dropdown></app-message-dropdown>
+      <div class="user-menu" *ngIf="user()">
+        <button class="user-button" (click)="toggleUserMenu()">
+          <img *ngIf="getUserImageUrl()" [src]="getUserImageUrl()" [alt]="getUserName()" class="user-avatar">
+          <div *ngIf="!getUserImageUrl()" class="user-avatar-initials">{{ getUserInitials() }}</div>
+          <span class="user-name">{{ getUserName() }}</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="user-dropdown" *ngIf="showUserMenu()">
+          <div class="user-info">
+            <strong>{{ getUserName() }}</strong>
+            <span>{{ user()?.email }}</span>
+          </div>
+          <a routerLink="/profile">Mon profil</a>
+          <a routerLink="/settings">Paramètres</a>
+          <button (click)="logout()">Déconnexion</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+

@@ -1,0 +1,214 @@
+<div class="dashboard">
+  <h1 class="dashboard-title">Dashboard</h1>
+
+  <app-loading *ngIf="loading()" message="Chargement des données..."></app-loading>
+
+  <div *ngIf="!loading() && metrics()" class="dashboard-content">
+    <!-- Top Row: 3 Metric Cards -->
+    <div class="metrics-row-top">
+      <app-card class="metric-card" [colored]="true" [backgroundColor]="'#FFE5D9'">
+        <div class="metric-content">
+          <h3 class="metric-title">Available Position</h3>
+          <div class="metric-value">{{ metrics()?.available_positions || 24 }}</div>
+          <div class="metric-subtitle urgent">{{ metrics()?.urgent_positions || 4 }} Urgently needed</div>
+        </div>
+      </app-card>
+
+      <app-card class="metric-card" [colored]="true" [backgroundColor]="'#E0F2FE'">
+        <div class="metric-content">
+          <h3 class="metric-title">Job Open</h3>
+          <div class="metric-value">{{ metrics()?.job_open || 10 }}</div>
+          <div class="metric-subtitle active">{{ metrics()?.active_hiring || 4 }} Active hiring</div>
+        </div>
+      </app-card>
+
+      <app-card class="metric-card" [colored]="true" [backgroundColor]="'#F3E5F5'">
+        <div class="metric-content">
+          <h3 class="metric-title">New Employees</h3>
+          <div class="metric-value">{{ metrics()?.new_employees || 24 }}</div>
+          <div class="metric-subtitle department">{{ metrics()?.departments_count || 4 }} Department</div>
+        </div>
+      </app-card>
+    </div>
+
+    <!-- Middle Row: 2 Large Metric Cards -->
+    <div class="metrics-row-middle">
+      <app-card class="metric-card-large">
+        <div class="metric-content">
+          <h3 class="metric-title">Total Employees</h3>
+          <div class="metric-value">{{ metrics()?.total_employees || 216 }}</div>
+          <div class="metric-details">
+            <div class="detail-item">
+              <span>{{ metrics()?.men_count || 120 }} Men</span>
+            </div>
+            <div class="detail-item">
+              <span>{{ metrics()?.women_count || 96 }} Women</span>
+            </div>
+          </div>
+          <div class="metric-trend">
+            <div class="trend-graph">
+              <svg width="60" height="30" viewBox="0 0 60 30">
+                <polyline points="0,25 15,20 30,15 45,10 60,5" fill="none" stroke="#dc3545" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="trend-info">
+              <span class="trend-value positive">+{{ metrics()?.employees_change || 2 }}%</span>
+              <span class="trend-label">Past month</span>
+            </div>
+          </div>
+        </div>
+      </app-card>
+
+      <app-card class="metric-card-large">
+        <div class="metric-content">
+          <h3 class="metric-title">Talent Request</h3>
+          <div class="metric-value">{{ metrics()?.talent_requests || 16 }}</div>
+          <div class="metric-details">
+            <div class="detail-item">
+              <span>{{ metrics()?.talent_men || 6 }} Men</span>
+            </div>
+            <div class="detail-item">
+              <span>{{ metrics()?.talent_women || 10 }} Women</span>
+            </div>
+          </div>
+          <div class="metric-trend">
+            <div class="trend-graph">
+              <svg width="60" height="30" viewBox="0 0 60 30">
+                <polyline points="0,25 15,20 30,15 45,10 60,5" fill="none" stroke="#dc3545" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="trend-info">
+              <span class="trend-value positive">+{{ metrics()?.talent_change || 5 }}%</span>
+              <span class="trend-label">Past month</span>
+            </div>
+          </div>
+        </div>
+      </app-card>
+    </div>
+
+    <!-- Bottom Row: 2 Columns Layout -->
+    <div class="dashboard-bottom-row">
+      <!-- Left Column: Announcements -->
+      <div class="dashboard-left-column">
+        <app-card>
+          <div class="section-header" slot="header-actions">
+            <h2 class="section-title">Announcement</h2>
+            <div class="date-selector">
+              <select [(ngModel)]="selectedDate">
+                <option [value]="selectedDate()">Today, {{ formatDate(selectedDate()) }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="announcements-list" *ngIf="announcements().length > 0; else noAnnouncements">
+            <div *ngFor="let announcement of announcements()" class="announcement-item">
+              <div class="announcement-content">
+                <h4 class="announcement-title">{{ announcement.title }}</h4>
+                <p class="announcement-time">{{ getRelativeTime(announcement.published_date) }}</p>
+              </div>
+              <div class="announcement-actions">
+                <button class="icon-button" *ngIf="announcement.published" aria-label="Pinned">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 17v5M5 17h14l-1-7H6l-1 7z" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M12 2v15" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </button>
+                <button class="icon-button" aria-label="More options">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                    <circle cx="12" cy="5" r="1" fill="currentColor"/>
+                    <circle cx="12" cy="19" r="1" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <ng-template #noAnnouncements>
+            <div class="announcements-list">
+              <p style="padding: 1rem; color: #555; text-align: center;">Aucune annonce disponible</p>
+            </div>
+          </ng-template>
+          <div class="section-footer" slot="footer">
+            <a routerLink="/announcement" class="see-all-link">See All Announcement</a>
+          </div>
+        </app-card>
+      </div>
+
+      <!-- Right Column: Activity and Schedule -->
+      <div class="dashboard-right-column">
+        <!-- Recently Activity Section -->
+        <app-card class="activity-card" [colored]="true" [backgroundColor]="'#1e3a5f'">
+          <h2 class="section-title">Recently Activity</h2>
+          <div class="activity-content" *ngIf="recentActivities().length > 0; else noActivity">
+            <div class="activity-time">{{ formatActivityDateTime(recentActivities()[0].created_at) }}</div>
+            <h3 class="activity-title">{{ getActivityTitle(recentActivities()[0]) }}</h3>
+            <p class="activity-description">
+              {{ recentActivities()[0].description }}
+            </p>
+            <div class="activity-summary">Today you makes {{ getTodayActivitiesCount() }} Activity</div>
+            <app-button variant="primary" class="activity-button" routerLink="/dashboard/activities">See All Activity</app-button>
+          </div>
+          <ng-template #noActivity>
+            <div class="activity-content">
+              <p class="activity-description">Aucune activité récente</p>
+              <app-button variant="primary" class="activity-button" routerLink="/dashboard/activities">See All Activity</app-button>
+            </div>
+          </ng-template>
+        </app-card>
+
+        <!-- Upcoming Schedule Section -->
+        <app-card class="schedule-card">
+          <div class="section-header" slot="header-actions">
+            <h2 class="section-title">Upcoming Schedule</h2>
+            <div class="date-selector">
+              <select [(ngModel)]="selectedDate">
+                <option [value]="selectedDate()">Today, {{ formatDate(selectedDate()) }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="schedule-list" *ngIf="upcomingSchedules().length > 0; else noSchedules">
+            <div class="schedule-category" *ngIf="getPrioritySchedules().length > 0">
+              <h4 class="category-title">Priority</h4>
+              <div class="schedule-item" *ngFor="let schedule of getPrioritySchedules()">
+                <div class="schedule-info">
+                  <div class="schedule-title">{{ schedule.title }}</div>
+                  <div class="schedule-time">{{ formatScheduleTime(schedule.scheduled_date) }}</div>
+                </div>
+                <button class="icon-button" aria-label="More options">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                    <circle cx="12" cy="5" r="1" fill="currentColor"/>
+                    <circle cx="12" cy="19" r="1" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="schedule-category" *ngIf="getOtherSchedules().length > 0">
+              <h4 class="category-title">Other</h4>
+              <div class="schedule-item" *ngFor="let schedule of getOtherSchedules()">
+                <div class="schedule-info">
+                  <div class="schedule-title">{{ schedule.title }}</div>
+                  <div class="schedule-time">{{ formatScheduleTime(schedule.scheduled_date) }}</div>
+                </div>
+                <button class="icon-button" aria-label="More options">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                    <circle cx="12" cy="5" r="1" fill="currentColor"/>
+                    <circle cx="12" cy="19" r="1" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <ng-template #noSchedules>
+            <div class="schedule-list">
+              <p style="padding: 1rem; color: #555;">Aucun horaire à venir</p>
+            </div>
+          </ng-template>
+          <div class="section-footer" slot="footer">
+            <a routerLink="/schedule/create" class="see-all-link">Creat a New Schedule</a>
+          </div>
+        </app-card>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<div class="support-dashboard">
+  <div class="dashboard-header">
+    <h1>Tickets de Support</h1>
+    <a routerLink="/support/tickets/new" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Nouveau Ticket
+    </a>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-grid" *ngIf="stats()">
+    <app-card>
+      <div class="stat-item">
+        <div class="stat-value">{{ stats().total || 0 }}</div>
+        <div class="stat-label">Total Tickets</div>
+      </div>
+    </app-card>
+    <app-card>
+      <div class="stat-item">
+        <div class="stat-value">{{ stats().open || 0 }}</div>
+        <div class="stat-label">Ouverts</div>
+      </div>
+    </app-card>
+    <app-card>
+      <div class="stat-item">
+        <div class="stat-value">{{ stats().in_progress || 0 }}</div>
+        <div class="stat-label">En Cours</div>
+      </div>
+    </app-card>
+    <app-card>
+      <div class="stat-item">
+        <div class="stat-value">{{ stats().resolved || 0 }}</div>
+        <div class="stat-label">Résolus</div>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Liste des tickets ouverts -->
+  <app-card title="Tickets Ouverts Récents">
+    <app-loading *ngIf="loading()"></app-loading>
+    
+    <div *ngIf="!loading() && tickets().length === 0" class="empty-state">
+      <p>Aucun ticket ouvert</p>
+    </div>
+
+    <div *ngIf="!loading() && tickets().length > 0" class="tickets-list">
+      <div class="ticket-item" *ngFor="let ticket of tickets()" [routerLink]="['/support/tickets', ticket.id]">
+        <div class="ticket-header">
+          <h3>{{ ticket.title }}</h3>
+          <div class="ticket-badges">
+            <span [class]="'badge ' + getStatusBadgeClass(ticket.status)">
+              {{ ticket.status === 'open' ? 'Ouvert' : ticket.status === 'in_progress' ? 'En Cours' : ticket.status === 'resolved' ? 'Résolu' : 'Fermé' }}
+            </span>
+            <span [class]="'badge ' + getPriorityBadgeClass(ticket.priority)">
+              {{ ticket.priority === 'low' ? 'Faible' : ticket.priority === 'medium' ? 'Moyen' : ticket.priority === 'high' ? 'Élevé' : 'Urgent' }}
+            </span>
+          </div>
+        </div>
+        <div class="ticket-meta">
+          <span>Catégorie: {{ ticket.category_name || 'N/A' }}</span>
+          <span *ngIf="ticket.assigned_to_name">Assigné à: {{ ticket.assigned_to_name }}</span>
+          <span>{{ ticket.created_at | date:'short' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!loading() && tickets().length > 0" class="card-footer">
+      <a routerLink="/support/tickets" class="view-all-link">Voir tous les tickets →</a>
+    </div>
+  </app-card>
+
+  <!-- Catégories -->
+  <app-card title="Catégories" *ngIf="categories().length > 0">
+    <div class="categories-list">
+      <div class="category-item" *ngFor="let category of categories()">
+        <span class="category-name">{{ category.name }}</span>
+        <span class="category-count">{{ category.tickets_count || 0 }} tickets</span>
+      </div>
+    </div>
+  </app-card>
+</div>
+

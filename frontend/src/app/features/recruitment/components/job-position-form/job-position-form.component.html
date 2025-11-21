@@ -1,0 +1,91 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="job-position-form">
+  <div class="form-group">
+    <label for="title">Titre du poste *</label>
+    <input
+      type="text"
+      id="title"
+      formControlName="title"
+      [class.invalid]="isFieldInvalid('title')"
+      placeholder="Ex: Développeur Full Stack"
+    />
+    <span class="error-message" *ngIf="isFieldInvalid('title')">
+      {{ getFieldError('title') }}
+    </span>
+  </div>
+
+  <div class="form-group">
+    <label for="description">Description *</label>
+    <textarea
+      id="description"
+      formControlName="description"
+      [class.invalid]="isFieldInvalid('description')"
+      rows="6"
+      placeholder="Description détaillée du poste..."
+    ></textarea>
+    <span class="error-message" *ngIf="isFieldInvalid('description')">
+      {{ getFieldError('description') }}
+    </span>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="department">Département</label>
+      <select
+        id="department"
+        formControlName="department"
+      >
+        <option [value]="null">Sélectionner un département</option>
+        <option *ngFor="let dept of departments" [value]="dept.id">
+          {{ dept.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="status">Statut *</label>
+      <select
+        id="status"
+        formControlName="status"
+        [class.invalid]="isFieldInvalid('status')"
+      >
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+      <span class="error-message" *ngIf="isFieldInvalid('status')">
+        {{ getFieldError('status') }}
+      </span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" formControlName="urgency" />
+      <span>Poste urgent</span>
+    </label>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="form-actions">
+    <app-button
+      type="button"
+      variant="outline"
+      (clicked)="onCancel()"
+      [disabled]="loading"
+    >
+      Annuler
+    </app-button>
+    <app-button
+      type="submit"
+      variant="primary"
+      [loading]="loading"
+      [disabled]="form.invalid"
+    >
+      {{ jobPosition ? 'Enregistrer' : 'Créer' }}
+    </app-button>
+  </div>
+</form>
+

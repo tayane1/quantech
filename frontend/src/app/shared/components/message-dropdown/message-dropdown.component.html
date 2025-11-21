@@ -1,0 +1,75 @@
+<div class="message-dropdown">
+  <button
+    class="message-button"
+    (click)="toggleDropdown()"
+    [class.has-unread]="unreadCount() > 0"
+    aria-label="Messages"
+  >
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+    <span class="badge" *ngIf="unreadCount() > 0">{{ unreadCount() > 99 ? '99+' : unreadCount() }}</span>
+  </button>
+
+  <div class="dropdown-menu" *ngIf="showDropdown()" (clickOutside)="closeDropdown()">
+    <div class="dropdown-header">
+      <h3>Messages</h3>
+    </div>
+
+    <div class="dropdown-content">
+      <app-loading *ngIf="loading()" message="Chargement..."></app-loading>
+
+      <div *ngIf="!loading() && conversations().length === 0" class="empty-messages">
+        <p>Aucun message</p>
+      </div>
+
+      <div *ngIf="!loading() && conversations().length > 0" class="conversations-list">
+        <div
+          *ngFor="let conversation of conversations()"
+          class="conversation-item"
+          [class.unread]="conversation.unread_count > 0"
+          (click)="handleConversationClick(conversation)"
+        >
+          <div class="conversation-avatar">
+            <span *ngIf="!conversation.last_message?.sender_avatar">
+              {{ getUserInitials(conversation.last_message?.sender_name || conversation.participant_names?.[0]) }}
+            </span>
+            <img
+              *ngIf="conversation.last_message?.sender_avatar"
+              [src]="conversation.last_message?.sender_avatar"
+              [alt]="conversation.last_message?.sender_name"
+            />
+            <span class="unread-dot" *ngIf="conversation.unread_count > 0"></span>
+          </div>
+          <div class="conversation-content">
+            <div class="conversation-header">
+              <h4 class="conversation-name">
+                {{ conversation.last_message?.sender_name || conversation.participant_names?.[0] || 'Utilisateur' }}
+              </h4>
+              <span class="conversation-time" *ngIf="conversation.last_message">
+                {{ getRelativeTime(conversation.last_message.created_at) }}
+              </span>
+            </div>
+            <p class="conversation-preview" *ngIf="conversation.last_message">
+              {{ conversation.last_message.content }}
+            </p>
+            <span class="unread-badge" *ngIf="conversation.unread_count > 0">
+              {{ conversation.unread_count }} nouveau{{ conversation.unread_count > 1 ? 'x' : '' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dropdown-footer" *ngIf="!loading() && conversations().length > 0">
+      <a routerLink="/messages" (click)="closeDropdown()">Voir tous les messages</a>
+    </div>
+  </div>
+</div>
+

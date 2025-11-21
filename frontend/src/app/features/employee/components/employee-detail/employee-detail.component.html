@@ -1,0 +1,128 @@
+<div class="employee-detail">
+  <app-loading *ngIf="loading()" message="Chargement de l'employé..."></app-loading>
+
+  <div *ngIf="!loading() && employee()" class="detail-content">
+    <div class="detail-header">
+      <div class="header-left">
+        <div class="employee-avatar-large">
+          <img *ngIf="getEmployeeImageUrl()" [src]="getEmployeeImageUrl()" [alt]="employee()!.full_name" />
+          <span *ngIf="!getEmployeeImageUrl()" class="avatar-placeholder">
+            {{ employee()!.first_name[0] }}{{ employee()!.last_name[0] }}
+          </span>
+          <button 
+            *ngIf="canEdit() && getEmployeeImageUrl()" 
+            class="delete-photo-button"
+            (click)="deleteProfilePicture()"
+            type="button"
+            aria-label="Supprimer la photo"
+            title="Supprimer la photo"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </button>
+        </div>
+        <div class="employee-header-info">
+          <h1>{{ employee()!.full_name || employee()!.first_name + ' ' + employee()!.last_name }}</h1>
+          <div class="employee-meta">
+            <span class="employee-id">ID: {{ employee()!.employee_id }}</span>
+            <span [class]="'badge ' + getStatusBadgeClass(employee()!.status)">
+              {{ getStatusDisplay(employee()!.status) }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions" *ngIf="canEdit()">
+        <app-button variant="primary" routerLink="/employee/{{ employee()!.id }}/edit">
+          Modifier
+        </app-button>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <app-card title="Informations personnelles">
+        <div class="info-list">
+          <div class="info-item">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ employee()!.email }}</span>
+          </div>
+          <div class="info-item" *ngIf="employee()!.phone">
+            <span class="info-label">Téléphone</span>
+            <span class="info-value">{{ employee()!.phone }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Date de naissance</span>
+            <span class="info-value">{{ formatDate(employee()!.date_of_birth) }} ({{ calculateAge(employee()!.date_of_birth) }} ans)</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Genre</span>
+            <span class="info-value">{{ employee()!.gender_display || employee()!.gender }}</span>
+          </div>
+        </div>
+      </app-card>
+
+      <app-card title="Informations professionnelles">
+        <div class="info-list">
+          <div class="info-item">
+            <span class="info-label">Date d'embauche</span>
+            <span class="info-value">{{ formatDate(employee()!.hire_date) }}</span>
+            <span class="info-subtext" *ngIf="employee()!.years_of_service">
+              ({{ employee()!.years_of_service }} ans de service)
+            </span>
+          </div>
+          <div class="info-item" *ngIf="employee()!.department_name">
+            <span class="info-label">Département</span>
+            <span class="info-value">{{ employee()!.department_name }}</span>
+          </div>
+          <div class="info-item" *ngIf="employee()!.position_name">
+            <span class="info-label">Poste</span>
+            <span class="info-value">{{ employee()!.position_name }}</span>
+          </div>
+          <div class="info-item" *ngIf="employee()!.manager_name">
+            <span class="info-label">Manager</span>
+            <span class="info-value">{{ employee()!.manager_name }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Salaire</span>
+            <span class="info-value salary">{{ formatSalary(employee()!.salary) }}</span>
+          </div>
+          <div class="info-item" *ngIf="hasSubordinates()">
+            <span class="info-label">Équipe</span>
+            <span class="info-value">{{ employee()!.subordinates_count }} subordonné(s)</span>
+          </div>
+        </div>
+      </app-card>
+
+      <app-card title="Adresse">
+        <div class="info-list">
+          <div class="info-item">
+            <span class="info-label">Adresse</span>
+            <span class="info-value">{{ employee()!.address }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Ville</span>
+            <span class="info-value">{{ employee()!.city }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Pays</span>
+            <span class="info-value">{{ employee()!.country }}</span>
+          </div>
+        </div>
+      </app-card>
+
+      <app-card title="Dates">
+        <div class="info-list">
+          <div class="info-item">
+            <span class="info-label">Créé le</span>
+            <span class="info-value">{{ formatDate(employee()!.created_at) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Modifié le</span>
+            <span class="info-value">{{ formatDate(employee()!.updated_at) }}</span>
+          </div>
+        </div>
+      </app-card>
+    </div>
+  </div>
+</div>
+

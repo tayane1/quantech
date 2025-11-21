@@ -1,0 +1,71 @@
+<div class="announcement-detail">
+  <app-loading *ngIf="loading()" message="Chargement de l'annonce..."></app-loading>
+
+  <div *ngIf="!loading() && announcement()" class="detail-content">
+    <div class="detail-header">
+      <div class="header-left">
+        <button class="back-button" (click)="router.navigate(['/announcement'])">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Retour aux annonces
+        </button>
+        <h1>{{ announcement()!.title }}</h1>
+        <div class="announcement-meta">
+          <span *ngIf="announcement()!.author_name" class="author">
+            Par {{ announcement()!.author_name }}
+          </span>
+          <span class="date">{{ getRelativeTime(announcement()!.published_date) }}</span>
+          <span class="badge" [class.published]="announcement()!.published" [class.draft]="!announcement()!.published">
+            {{ announcement()!.published ? 'Publié' : 'Brouillon' }}
+          </span>
+        </div>
+      </div>
+      <div class="header-actions" *ngIf="canEdit()">
+        <app-button variant="outline" routerLink="/announcement/{{ announcement()!.id }}/edit">
+          Modifier
+        </app-button>
+        <app-button variant="outline" (clicked)="deleteAnnouncement(announcement()!.id!)" style="border-color: #e74c3c; color: #e74c3c;">
+          Supprimer
+        </app-button>
+      </div>
+    </div>
+
+    <app-card class="announcement-card">
+      <div class="announcement-content">
+        <div class="content-text" [innerHTML]="announcement()!.content"></div>
+        
+        <div class="announcement-tags" *ngIf="hasDepartments()">
+          <span class="tag-label">Départements visés :</span>
+          <span class="tag" *ngFor="let deptName of announcement()!.departments_names!">
+            {{ deptName }}
+          </span>
+        </div>
+        
+        <div class="announcement-tags" *ngIf="announcement()!.visible_to_all">
+          <span class="tag visible-to-all">Visible par tous les utilisateurs</span>
+        </div>
+      </div>
+
+      <div class="announcement-footer">
+        <div class="footer-info">
+          <span class="info-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Publié le {{ formatDate(announcement()!.published_date) }}
+          </span>
+          <span class="info-item" *ngIf="announcement()!.author_name">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            {{ announcement()!.author_name }}
+          </span>
+        </div>
+      </div>
+    </app-card>
+  </div>
+</div>
+

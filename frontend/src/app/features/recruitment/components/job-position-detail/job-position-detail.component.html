@@ -1,0 +1,81 @@
+<div class="job-position-detail">
+  <app-loading *ngIf="loading()" message="Chargement du poste..."></app-loading>
+
+  <div *ngIf="!loading() && jobPosition()" class="detail-content">
+    <div class="detail-header">
+      <div>
+        <h1>{{ jobPosition()!.title }}</h1>
+        <div class="job-meta">
+          <span [class]="'badge ' + getStatusBadgeClass(jobPosition()!.status)">
+            {{ getStatusDisplay(jobPosition()!.status) }}
+          </span>
+          <span *ngIf="jobPosition()!.urgency" class="badge badge-danger">Urgent</span>
+        </div>
+      </div>
+      <div class="header-actions" *ngIf="canEdit()">
+        <app-button variant="primary" routerLink="/recruitment/positions/{{ jobPosition()!.id }}/edit">
+          Modifier
+        </app-button>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <app-card title="Description" class="description-card">
+        <div class="description-content">
+          <p>{{ jobPosition()!.description }}</p>
+        </div>
+      </app-card>
+
+      <app-card title="Informations">
+        <div class="info-list">
+          <div class="info-item" *ngIf="jobPosition()!.department_name">
+            <span class="info-label">Département</span>
+            <span class="info-value">{{ jobPosition()!.department_name }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Candidats</span>
+            <span class="info-value">{{ jobPosition()!.candidates_count || 0 }} candidat(s)</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Candidats actifs</span>
+            <span class="info-value">{{ jobPosition()!.active_candidates_count || 0 }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Créé le</span>
+            <span class="info-value">{{ formatDate(jobPosition()!.created_at) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Modifié le</span>
+            <span class="info-value">{{ formatDate(jobPosition()!.updated_at) }}</span>
+          </div>
+        </div>
+      </app-card>
+
+      <app-card title="Candidats" class="candidates-card" *ngIf="candidates().length > 0">
+        <div class="candidates-list">
+          <div 
+            class="candidate-item" 
+            *ngFor="let candidate of candidates()" 
+            [routerLink]="['/recruitment/candidates', candidate.id]">
+            <div class="candidate-header">
+              <h4>{{ candidate.full_name || candidate.first_name + ' ' + candidate.last_name }}</h4>
+              <span [class]="'badge ' + getCandidateStatusBadgeClass(candidate.status)">
+                {{ candidate.status_display || candidate.status }}
+              </span>
+            </div>
+            <div class="candidate-info">
+              <span>{{ candidate.email }}</span>
+              <span class="candidate-date">Postulé le {{ formatDate(candidate.applied_date) }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a routerLink="/recruitment/candidates" [queryParams]="{position: jobPosition()!.id}" class="view-all-link">
+            Voir tous les candidats →
+          </a>
+        </div>
+      </app-card>
+    </div>
+  </div>
+</div>
+

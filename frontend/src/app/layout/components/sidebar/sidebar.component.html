@@ -1,0 +1,98 @@
+<aside class="sidebar">
+  <!-- Mobile Sidebar (overlay) -->
+  <div class="sidebar-mobile-overlay" *ngIf="isMobileMenuOpen()" (click)="closeMobileMenu()"></div>
+  <nav class="sidebar-mobile" [class.open]="isMobileMenuOpen()">
+    <div class="sidebar-header">
+      <div class="logo">WeHR</div>
+      <button class="close-button" (click)="closeMobileMenu()" aria-label="Close menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="menu-section">
+      <h3 class="menu-title">MAIN MENU</h3>
+      <ul class="menu-list">
+        <li *ngFor="let item of mainMenuItems" [class.active]="isActive(item.route)">
+          <a [routerLink]="item.route" (click)="closeMobileMenu()" *ngIf="canAccess(item)">
+            <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path *ngIf="item.icon === 'grid'" d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'megaphone'" d="M3 11v2a5 5 0 0 0 5 5h.5M17 11v2a5 5 0 0 1-5 5h-.5M12 2L9 7h6l-3-5zM12 7v14M17 7h5l-2 2 2 2h-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path *ngIf="item.icon === 'person'" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle *ngIf="item.icon === 'person'" cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'calendar'" d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'people'" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle *ngIf="item.icon === 'people'" cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'building'" d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path *ngIf="item.icon === 'settings'" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'settings'" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="menu-section">
+      <h3 class="menu-title">OTHER</h3>
+      <ul class="menu-list">
+        <li *ngFor="let item of otherMenuItems" [class.active]="isActive(item.route)">
+          <a [routerLink]="item.route" (click)="closeMobileMenu()" *ngIf="canAccess(item)">
+            <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path *ngIf="item.icon === 'headphones'" d="M3 18v-6a9 9 0 0 1 18 0v6" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'headphones'" d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'settings'" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'settings'" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Tablet/Desktop Sidebar -->
+  <nav class="sidebar-desktop">
+    <div class="sidebar-header">
+      <div class="logo">WeHR</div>
+    </div>
+    <div class="menu-section">
+      <h3 class="menu-title">MAIN MENU</h3>
+      <ul class="menu-list">
+        <li *ngFor="let item of mainMenuItems" [class.active]="isActive(item.route)">
+          <a [routerLink]="item.route" *ngIf="canAccess(item)">
+            <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" [class.active-icon]="isActive(item.route)">
+              <path *ngIf="item.icon === 'grid'" d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'megaphone'" d="M3 11v2a5 5 0 0 0 5 5h.5M17 11v2a5 5 0 0 1-5 5h-.5M12 2L9 7h6l-3-5zM12 7v14M17 7h5l-2 2 2 2h-5" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path *ngIf="item.icon === 'person'" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+              <circle *ngIf="item.icon === 'person'" cx="12" cy="7" r="4" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'calendar'" d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'people'" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+              <circle *ngIf="item.icon === 'people'" cx="9" cy="7" r="4" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'building'" d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path *ngIf="item.icon === 'settings'" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'settings'" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+            </svg>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="menu-section">
+      <h3 class="menu-title">OTHER</h3>
+      <ul class="menu-list">
+        <li *ngFor="let item of otherMenuItems" [class.active]="isActive(item.route)">
+          <a [routerLink]="item.route" *ngIf="canAccess(item)">
+            <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path *ngIf="item.icon === 'headphones'" d="M3 18v-6a9 9 0 0 1 18 0v6" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'headphones'" d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'settings'" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+              <path *ngIf="item.icon === 'settings'" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" [attr.stroke]="isActive(item.route) ? '#dc3545' : 'currentColor'" stroke-width="2" fill="none"/>
+            </svg>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+

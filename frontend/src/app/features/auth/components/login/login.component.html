@@ -1,0 +1,57 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>WeHR</h1>
+      <p>Connexion à votre compte</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          [class.invalid]="isFieldInvalid('username')"
+          placeholder="Entrez votre nom d'utilisateur"
+        />
+        <span class="error-message" *ngIf="isFieldInvalid('username')">
+          {{ getFieldError('username') }}
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          [class.invalid]="isFieldInvalid('password')"
+          placeholder="Entrez votre mot de passe"
+        />
+        <span class="error-message" *ngIf="isFieldInvalid('password')">
+          {{ getFieldError('password') }}
+        </span>
+      </div>
+
+      <div class="error-message" *ngIf="error()">
+        {{ error() }}
+      </div>
+
+      <app-button
+        type="submit"
+        variant="primary"
+        [loading]="loading()"
+        [disabled]="loginForm.invalid"
+        class="login-button"
+      >
+        Se connecter
+      </app-button>
+
+      <div class="register-link">
+        <p>Pas encore de compte ? <a routerLink="/register">S'inscrire</a></p>
+      </div>
+    </form>
+  </div>
+</div>
+
