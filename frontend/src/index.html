@@ -8,8 +8,8 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <!-- Content Security Policy (CSP) - Protection XSS -->
   <!-- Note: connect-src autorise les connexions HTTP vers l'API backend -->
-  <!-- Note: img-src autorise les images depuis l'API backend (localhost:8000) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: http://localhost:8000; font-src 'self' data:; connect-src 'self' http://localhost:8000 ws://localhost:* wss://localhost:*;">
+  <!-- Note: img-src autorise les images depuis l'API backend (localhost:8001) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: http://localhost:8001; font-src 'self' data:; connect-src 'self' http://localhost:8001 ws://localhost:* wss://localhost:*;">
   <!-- Note: X-Frame-Options doit être défini dans les en-têtes HTTP du serveur, pas dans meta -->
   <!-- X-Content-Type-Options - Protection MIME sniffing -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
