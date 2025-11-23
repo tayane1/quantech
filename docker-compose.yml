@@ -8,7 +8,7 @@ services:
       - "8001:8000"
     volumes:
       - backend-media:/app/src/media
-      - backend-db:/app/src
+      - backend-static:/app/src/staticfiles
     environment:
       - DEBUG=True
       - SECRET_KEY=django-production-secret-key-change-in-production
@@ -18,7 +18,7 @@ services:
     networks:
       - quantech-network
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/admin/login/')"]
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/admin/login/', timeout=5)"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -40,7 +40,7 @@ services:
     networks:
       - quantech-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -48,7 +48,7 @@ services:
 volumes:
   backend-media:
     driver: local
-  backend-db:
+  backend-static:
     driver: local
 
 networks:
