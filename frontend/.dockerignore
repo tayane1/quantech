@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+.angular
+dist
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+.git
+.gitignore
+*.md
+coverage
+.nyc_output
+e2e
